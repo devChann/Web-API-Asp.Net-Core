@@ -10,87 +10,28 @@ namespace OSlBackendWebService.Services
 {
     public class OslRepository:IOSLRepository
     {
-        private List<ToDoItems> _toDoList;
-
         private readonly OslMobileBackendWebserviceContext _ctx;
 
         public OslRepository(OslMobileBackendWebserviceContext ctx)
         {
-            InitializeData();
+            
             _ctx = ctx;
         }
 
-        public IEnumerable<ToDoItems> All
-        {
-            get { return _toDoList; }
-        }
-
+       
         public IEnumerable<Employees> GetAll
         {
             get { return _ctx.Employees.ToList(); }
         }
 
-
-        public bool DoesItemExist(string id)
+       
+        public Employees Find(int id)
         {
-            return _toDoList.Any(item => item.ID == id);
+            return _ctx.Employees.FirstOrDefault(sa => sa.EmpId == id);
+     
         }
 
-        public ToDoItems Find(string id)
-        {
-            return _toDoList.FirstOrDefault(item => item.ID == id);
-        }
-
-        public void Insert(ToDoItems item)
-        {
-            _toDoList.Add(item);
-        }
-
-        public void Update(ToDoItems item)
-        {
-            var todoItem = this.Find(item.ID);
-            var index = _toDoList.IndexOf(todoItem);
-            _toDoList.RemoveAt(index);
-            _toDoList.Insert(index, item);
-        }
-
-        public void Delete(string id)
-        {
-            _toDoList.Remove(this.Find(id));
-        }
-
-        private void InitializeData()
-        {
-            _toDoList = new List<ToDoItems>();
-
-            var todoItem1 = new ToDoItems
-            {
-                ID = "6bb8a868-dba1-4f1a-93b7-24ebce87e243",
-                Name = "Learn app development",
-                Notes = "Attend Xamarin University",
-                Done = true
-            };
-
-            var todoItem2 = new ToDoItems
-            {
-                ID = "b94afb54-a1cb-4313-8af3-b7511551b33b",
-                Name = "Develop apps",
-                Notes = "Use Xamarin Studio/Visual Studio",
-                Done = false
-            };
-
-            var todoItem3 = new ToDoItems
-            {
-                ID = "ecfa6f80-3671-4911-aabe-63cc442c1ecf",
-                Name = "Publish apps",
-                Notes = "All app stores",
-                Done = false,
-            };
-
-            _toDoList.Add(todoItem1);
-            _toDoList.Add(todoItem2);
-            _toDoList.Add(todoItem3);
-        }
+       
 
         public IQueryable<Employees> GetAllEmployees()
         {
@@ -100,10 +41,20 @@ namespace OSlBackendWebService.Services
         public Employees GetEmployee(int EmpID)
         {
             var employee = _ctx.Employees
-                .Include(a=>a.Station)
+                //.Include(a=>a.Station)
                 .Where(s => s.EmpId == EmpID)
                 .SingleOrDefault();
             return employee;
+        }
+
+        
+        public IQueryable<EmployeesLogs> GetLogsByDate(DateTime date)
+        {
+            return _ctx.EmployeesLogs
+                        .Include(sa=>sa.Emp).ThenInclude(a=>a.StationId)
+                        
+                    .Where(c => c.Qdate == date)
+                    .AsQueryable();
         }
 
         public bool DoesEmpExist(int EmpID)
@@ -150,7 +101,7 @@ namespace OSlBackendWebService.Services
         public Stations GetStations(int StationID)
         {
             var stations = _ctx.Stations
-                .Include(a => a.Employees)
+                //.Include(a => a.Employees)
                 .Where(a => a.Stid == StationID)
                 .SingleOrDefault();
             return stations;
@@ -185,12 +136,13 @@ namespace OSlBackendWebService.Services
         public Supervisors GetSup(int SupID)
         {
             var supervisor = _ctx.Supervisors
-                .Include(x => x.Employees)
+                
                 .Where(x => x.SupId == SupID)
                 .SingleOrDefault();
             return supervisor;
         }
 
+       
         public bool DoesSupExist(int SupID)
         {
             return _ctx.Supervisors.Any(se => se.SupId == SupID);
@@ -236,6 +188,13 @@ namespace OSlBackendWebService.Services
         public bool SaveAll()
         {
             return _ctx.SaveChanges() > 0;
+        }
+
+       
+
+        public void Delete(string id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

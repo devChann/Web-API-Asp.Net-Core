@@ -8,11 +8,8 @@ namespace OSlBackendWebService.Interfaces
 {
     public interface IOSLRepository
     {
-        bool DoesItemExist(string id);
-        IEnumerable<ToDoItems> All { get; }
-        ToDoItems Find(string id);
-        void Insert(ToDoItems item);
-        void Update(ToDoItems item);
+       
+       
         void Delete(string id);
 
 
@@ -26,7 +23,7 @@ namespace OSlBackendWebService.Interfaces
         void Update(Employees originalemp,Employees UpdatedEmp);
         void DeleteEmp(int empID);
 
-
+        IQueryable<EmployeesLogs> GetLogsByDate(DateTime date);
 
         IQueryable<Stations> GetAllStations();
         Stations GetStations(int StationID);

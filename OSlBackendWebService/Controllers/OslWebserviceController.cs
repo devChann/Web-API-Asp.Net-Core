@@ -21,7 +21,7 @@ namespace OSlBackendWebService.Controllers
 
         }
         [HttpGet]
-
+        [Route("Employess")]
         public IActionResult List()
         {
             return Ok(_toDoRepository.GetAll);
@@ -30,7 +30,6 @@ namespace OSlBackendWebService.Controllers
         [Route("CreateNewEmployee")]
         public IActionResult Create([FromBody] Employees emp)
         {
-            
             try
             {
                 if (emp == null || !ModelState.IsValid)
@@ -40,7 +39,7 @@ namespace OSlBackendWebService.Controllers
                 bool empExits = _toDoRepository.DoesEmpExist(emp.EmpId);
                 if (empExits)
                 {
-                    return StatusCode(StatusCodes.Status409Conflict, ErrorCode.TodoItemIDInUse.ToString());
+                    return StatusCode(StatusCodes.Status409Conflict, ErrorCode.logExist.ToString());
                 }
                 _toDoRepository.Insert(emp);
                 _toDoRepository.SaveAll();
@@ -62,8 +61,11 @@ namespace OSlBackendWebService.Controllers
                 {
                     return BadRequest(ErrorCode.TodoItemNameAndNotesRequired.ToString());
                 }
-                
-                
+                bool EmpLogExist = _toDoRepository.DoesEmpExist(emplogs.EmpId);
+                if (EmpLogExist)
+                {
+                    return StatusCode(StatusCodes.Status409Conflict, ErrorCode.logExist.ToString());
+                }
                 _toDoRepository.Insert(emplogs);
                 _toDoRepository.SaveAll();
             }
@@ -73,32 +75,48 @@ namespace OSlBackendWebService.Controllers
             }
             return Ok(emplogs);
         }
-        [HttpPut]
-        public IActionResult Edit([FromBody] ToDoItems item)
+        [HttpGet]
+        [Route("GetEmployee/{id}")]
+        public IActionResult GetEmp(int id)
         {
-            try
-            {
-                if (item == null || !ModelState.IsValid)
-                {
-                    return BadRequest(ErrorCode.TodoItemNameAndNotesRequired.ToString());
-                }
-                var existingItem = _toDoRepository.Find(item.ID);
-                if (existingItem == null)
-                {
-                    return NotFound(ErrorCode.RecordNotFound.ToString());
-                }
-                _toDoRepository.Update(item);
-            }
-            catch (Exception)
-            {
-                return BadRequest(ErrorCode.CouldNotUpdateItem.ToString());
-            }
-            return NoContent();
+
+            var employee = _toDoRepository.GetEmployee(id);
+            return Ok(employee);
+        }
+
+        // get 
+        [HttpGet]
+        [Route("GetEmployeeLogs/{date}")]
+        public IActionResult GetEmpLogs(DateTime date)
+        {
+
+            var logs = _toDoRepository.GetLogsByDate(date);
+            return Ok(logs);
+        }
+
+        [HttpGet]
+        [Route("GetSupervisor/{id}")]
+        public IActionResult Supervispor(int id)
+        {
+
+            var supervisor = _toDoRepository.GetSup(id);
+
+            return Ok(supervisor);
+        }
+
+        [HttpGet]
+        [Route("GetStations/{id}")]
+        public IActionResult GetStations(int id)
+        {
+
+            var station = _toDoRepository.GetStations(id);
+
+            return Ok(station);
         }
         public enum ErrorCode
         {
             TodoItemNameAndNotesRequired,
-            TodoItemIDInUse,
+            logExist,
             RecordNotFound,
             CouldNotCreateItem,
             CouldNotUpdateItem,

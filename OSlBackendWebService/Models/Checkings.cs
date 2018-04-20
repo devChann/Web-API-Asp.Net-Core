@@ -11,6 +11,8 @@ namespace OSlBackendWebService.Models
         public string EmpId { get; set; }
         public double? Xcord { get; set; }
         public double? Ycoord { get; set; }
+        public bool? CheckStatus { get; set; }
+        public DateTime? CheckDate { get; set; }
 
         public Supervisors Sup { get; set; }
     }

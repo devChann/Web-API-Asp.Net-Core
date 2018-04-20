@@ -6,24 +6,17 @@ namespace OSlBackendWebService.Models
 {
     public partial class OslMobileBackendWebserviceContext : DbContext
     {
+        public OslMobileBackendWebserviceContext(DbContextOptions<OslMobileBackendWebserviceContext>options):base(options)
+        {
+
+        }
         public virtual DbSet<Checkings> Checkings { get; set; }
         public virtual DbSet<Employees> Employees { get; set; }
         public virtual DbSet<EmployeesLogs> EmployeesLogs { get; set; }
         public virtual DbSet<Stations> Stations { get; set; }
         public virtual DbSet<Supervisors> Supervisors { get; set; }
-        public OslMobileBackendWebserviceContext(DbContextOptions<OslMobileBackendWebserviceContext>options):base(options)
-        {
 
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-             //To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer(@"Server=TS-PC\SQLEXPRESS;Initial Catalog=OslMobileBackendWebservice;Trusted_Connection=True;");
-            }
-        }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,6 +25,10 @@ namespace OSlBackendWebService.Models
                 entity.HasKey(e => e.TranszactionId);
 
                 entity.Property(e => e.TranszactionId).HasColumnName("TranszactionID");
+
+                entity.Property(e => e.CheckDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(CONVERT([varchar],getdate()))");
 
                 entity.Property(e => e.EmpId)
                     .HasColumnName("EmpID")
@@ -61,13 +58,7 @@ namespace OSlBackendWebService.Models
                 entity.HasOne(d => d.Station)
                     .WithMany(p => p.Employees)
                     .HasForeignKey(d => d.StationId)
-                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Employees_Stations");
-
-                entity.HasOne(d => d.StationNavigation)
-                    .WithMany(p => p.Employees)
-                    .HasForeignKey(d => d.StationId)
-                    .HasConstraintName("FK_Employees_Supervisors");
             });
 
             modelBuilder.Entity<EmployeesLogs>(entity =>
@@ -80,11 +71,16 @@ namespace OSlBackendWebService.Models
 
                 entity.Property(e => e.Lit)
                     .HasColumnName("LIT")
-                    .HasColumnType("datetime");
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(CONVERT([varchar],getdate()))");
 
                 entity.Property(e => e.Lot)
                     .HasColumnName("LOT")
                     .HasColumnType("datetime");
+
+                entity.Property(e => e.Qdate)
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(CONVERT([varchar],getdate(),(103)))");
 
                 entity.HasOne(d => d.Emp)
                     .WithMany(p => p.EmployeesLogs)
