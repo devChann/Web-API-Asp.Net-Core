@@ -4,10 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using OSlBackendWebService.Interfaces;
+using OSlBackendWebService.Models;
+using OSlBackendWebService.Services;
 
 namespace OSlBackendWebService
 {
@@ -24,6 +28,9 @@ namespace OSlBackendWebService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddDbContext<OslMobileBackendWebserviceContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("osl")));
+            services.AddSingleton<IOSLRepository, OslRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
