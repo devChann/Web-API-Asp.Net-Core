@@ -1,4 +1,5 @@
 ﻿using OSlBackendWebService.Models;
+using OSlBackendWebService.oslviewmodels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,21 +17,24 @@ namespace OSlBackendWebService.Interfaces
 
         IQueryable<Employees> GetAllEmployees();
         IEnumerable<Employees> GetAll { get; }
-        Employees GetEmployee(int EmpID);
+       EmployeelistViewModel GetEmployee(int EmpID);
         bool DoesEmpExist(int EmpID);
         bool LoginEmp(int EmpID, int password);
         void Insert(Employees emp);
         void Update(Employees originalemp,Employees UpdatedEmp);
         void DeleteEmp(int empID);
+        //Task<List<EmployeesLogsViewModel>> GetLogsForStation();
 
-        IQueryable<EmployeesLogs> GetLogsByDate(DateTime date);
-
+        Emplogs Logs(int id);
+        bool checklogexist(int empid);
+        void UpdateEmployee(EmployeesLogs checkedstatus);
+        EmployeesLogs find(int id);
         IQueryable<Stations> GetAllStations();
-        Stations GetStations(int StationID);
+        EmployeesLogsViewModel GetStations(int StationID);
         bool DoesStationExist(int stationId);
         void Insert(Stations stn);
         void Update(Stations Original, Stations updated);
-        void DeleteStn(int stationId);
+        //void DeleteStn(int stationId);
 
         IQueryable<Supervisors> GetAllSupervisors();
         Supervisors GetSup(int SupID);
@@ -42,7 +46,7 @@ namespace OSlBackendWebService.Interfaces
 
         void Insert(EmployeesLogs Emplogs);
         void Insert(Checkings checks);
-        bool SaveAll();
+        void SaveAll();
 
     }
 }

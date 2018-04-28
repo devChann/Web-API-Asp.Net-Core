@@ -36,11 +36,11 @@ namespace OSlBackendWebService.Controllers
                 {
                     return BadRequest(ErrorCode.TodoItemNameAndNotesRequired.ToString());
                 }
-                bool empExits = _toDoRepository.DoesEmpExist(emp.EmpId);
-                if (empExits)
-                {
-                    return StatusCode(StatusCodes.Status409Conflict, ErrorCode.logExist.ToString());
-                }
+                //bool empExits = _toDoRepository.DoesEmpExist(emp.EmpId);
+                //if (empExits)
+                //{
+                //    return StatusCode(StatusCodes.Status409Conflict, ErrorCode.logExist.ToString());
+                //}
                 _toDoRepository.Insert(emp);
                 _toDoRepository.SaveAll();
             }
@@ -61,10 +61,10 @@ namespace OSlBackendWebService.Controllers
                 {
                     return BadRequest(ErrorCode.TodoItemNameAndNotesRequired.ToString());
                 }
-                bool EmpLogExist = _toDoRepository.DoesEmpExist(emplogs.EmpId);
+                bool EmpLogExist = _toDoRepository.checklogexist(emplogs.EmpId);
                 if (EmpLogExist)
                 {
-                    return StatusCode(StatusCodes.Status409Conflict, ErrorCode.logExist.ToString());
+                   return StatusCode(StatusCodes.Status409Conflict, ErrorCode.logExist.ToString());
                 }
                 _toDoRepository.Insert(emplogs);
                 _toDoRepository.SaveAll();
@@ -75,6 +75,31 @@ namespace OSlBackendWebService.Controllers
             }
             return Ok(emplogs);
         }
+        [HttpPost]
+        [Route("Checkings")]
+        public IActionResult ChecksCreateLogs([FromBody] Checkings checkings)
+        {
+
+            try
+            {
+                if (checkings == null || !ModelState.IsValid)
+                {
+                    return BadRequest(ErrorCode.TodoItemNameAndNotesRequired.ToString());
+                }
+                //bool EmpLogExist = _toDoRepository.checklogexist();
+                ////if (EmpLogExist)
+                ////{
+                ////    return StatusCode(StatusCodes.Status409Conflict, ErrorCode.logExist.ToString());
+                ////}
+                _toDoRepository.Insert(checkings);
+                _toDoRepository.SaveAll();
+            }
+            catch (Exception)
+            {
+                return BadRequest(ErrorCode.CouldNotCreateItem.ToString());
+            }
+            return Ok(checkings);
+        }
         [HttpGet]
         [Route("GetEmployee/{id}")]
         public IActionResult GetEmp(int id)
@@ -84,13 +109,14 @@ namespace OSlBackendWebService.Controllers
             return Ok(employee);
         }
 
-        // get 
+       
         [HttpGet]
-        [Route("GetEmployeeLogs/{date}")]
-        public IActionResult GetEmpLogs(DateTime date)
+        [Route("GetEmployeeLogs/{id}")]
+        public IActionResult Logs(int id)
         {
+            
 
-            var logs = _toDoRepository.GetLogsByDate(date);
+            var logs = _toDoRepository.Logs(id);
             return Ok(logs);
         }
 
@@ -112,6 +138,32 @@ namespace OSlBackendWebService.Controllers
             var station = _toDoRepository.GetStations(id);
 
             return Ok(station);
+        }
+        [HttpPut]
+        [Route("updatelogsstatus/{id}")]
+        public IActionResult Edit(int id,[FromBody] EmployeesLogs employeesLogs)
+        {
+            try
+            {
+                if (employeesLogs == null || !ModelState.IsValid)
+                {
+                    return BadRequest(ErrorCode.TodoItemNameAndNotesRequired.ToString());
+                }
+                var RecordToBeUpdated = _toDoRepository.find(id);
+                RecordToBeUpdated.CheckedSatus = employeesLogs.CheckedSatus;
+
+                if (RecordToBeUpdated == null)
+                {
+                    return NotFound(ErrorCode.RecordNotFound.ToString());
+                }
+                _toDoRepository.UpdateEmployee(RecordToBeUpdated);
+                _toDoRepository.SaveAll();
+            }
+            catch (Exception)
+            {
+                return BadRequest(ErrorCode.CouldNotUpdateItem.ToString());
+            }
+            return NoContent();
         }
         public enum ErrorCode
         {

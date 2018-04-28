@@ -80,7 +80,11 @@ namespace OSlBackendWebService.Models
 
                 entity.Property(e => e.Qdate)
                     .HasColumnType("date")
-                    .HasDefaultValueSql("(CONVERT([varchar],getdate(),(103)))");
+                    .HasDefaultValueSql("(CONVERT([varchar],getdate()))");
+
+                entity.Property(e => e.StringDate)
+                    .HasColumnType("nchar(10)")
+                    .HasDefaultValueSql("(CONVERT([char](10),getdate(),(126)))");
 
                 entity.HasOne(d => d.Emp)
                     .WithMany(p => p.EmployeesLogs)

@@ -27,10 +27,15 @@ namespace OSlBackendWebService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            //services.AddMvc();
             services.AddDbContext<OslMobileBackendWebserviceContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("osl")));
             services.AddSingleton<IOSLRepository, OslRepository>();
+            services.AddMvc()
+                     .AddJsonOptions(
+                        options => options.SerializerSettings.ReferenceLoopHandling =
+                        Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

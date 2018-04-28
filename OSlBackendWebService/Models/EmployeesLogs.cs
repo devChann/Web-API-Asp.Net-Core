@@ -11,8 +11,9 @@ namespace OSlBackendWebService.Models
         public DateTime? Lot { get; set; }
         public double? Xcoord { get; set; }
         public double? Ycoord { get; set; }
-        public DateTime? Qdate { get; set; }
-        public bool? CheckedSatus { get; set; }
+        public DateTime ?Qdate { get; set; }
+        public bool? CheckedSatus { get; set; } = false;
+        public string StringDate { get; set; }
 
         public Employees Emp { get; set; }
     }

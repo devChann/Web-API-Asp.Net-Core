@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OSlBackendWebService.oslviewmodels;
 
 namespace OSlBackendWebService.Services
 {
@@ -38,29 +39,28 @@ namespace OSlBackendWebService.Services
             return _ctx.Employees.AsQueryable();
         }
 
-        public Employees GetEmployee(int EmpID)
+        public EmployeelistViewModel GetEmployee(int EmpID)
         {
             var employee = _ctx.Employees
-                //.Include(a=>a.Station)
+               
                 .Where(s => s.EmpId == EmpID)
                 .SingleOrDefault();
-            return employee;
-        }
-
-        
-        public IQueryable<EmployeesLogs> GetLogsByDate(DateTime date)
-        {
-            return _ctx.EmployeesLogs
-                        .Include(sa=>sa.Emp).ThenInclude(a=>a.StationId)
-                        
-                    .Where(c => c.Qdate == date)
-                    .AsQueryable();
-        }
+            var viewmodel = new EmployeelistViewModel();
+            viewmodel.EmpId = employee.EmpId;
+            viewmodel.Password = employee.Password;
+            return viewmodel;
+        }      
 
         public bool DoesEmpExist(int EmpID)
         {
            
             return _ctx.Employees.Any(s => s.EmpId == EmpID);
+        }
+        public bool checklogexist(int empid)
+        {
+            String CurrentDate = DateTime.Today.ToString("yyyy-MM-dd");
+
+            return _ctx.EmployeesLogs.Any(s => s.EmpId == empid & s.StringDate ==CurrentDate);
         }
 
         public bool LoginEmp(int EmpID, int password)
@@ -80,7 +80,10 @@ namespace OSlBackendWebService.Services
         {
              _ctx.Employees.Add(emp);
         }
-
+        public void insert(Checkings checkings)
+        {
+            _ctx.Checkings.Add(checkings);
+        }
         public void Update(Employees originalemp, Employees UpdatedEmp)
         {
             _ctx.Entry(originalemp).CurrentValues.SetValues(UpdatedEmp);
@@ -98,13 +101,33 @@ namespace OSlBackendWebService.Services
             return _ctx.Stations.AsQueryable();
         }
 
-        public Stations GetStations(int StationID)
+        public EmployeesLogsViewModel GetStations(int StationID)
         {
             var stations = _ctx.Stations
-                //.Include(a => a.Employees)
+                .Include(a => a.Employees)
+               
                 .Where(a => a.Stid == StationID)
                 .SingleOrDefault();
-            return stations;
+            var test = new EmployeesLogsViewModel();
+            test.StationName = stations.StationName;
+            test.employees = stations.Employees;
+            return test;
+        }
+       
+        public Emplogs Logs(int id)
+        {
+
+            String CurrentDate = DateTime.Today.ToString("yyyy-MM-dd");
+            var viewmodel = new Emplogs();
+            var logdata = _ctx.EmployeesLogs
+                .Where(sa => sa.EmpId == id & sa.StringDate == CurrentDate)
+                .SingleOrDefault();
+            viewmodel.Lit = logdata.Lit;
+            viewmodel.CheckedSatus = logdata.CheckedSatus;
+            return viewmodel;
+                
+              
+                                    
         }
 
         public bool DoesStationExist(int stationId)
@@ -122,10 +145,7 @@ namespace OSlBackendWebService.Services
             _ctx.Entry(Original).CurrentValues.SetValues(updated);
         }
 
-        public void DeleteStn(int stationId)
-        {
-            _ctx.Stations.Remove(this.GetStations(stationId));
-        }
+        
 
         public IQueryable<Supervisors> GetAllSupervisors()
         {
@@ -168,6 +188,7 @@ namespace OSlBackendWebService.Services
 
         public void Update(Supervisors supervisorold, Supervisors newSup)
         {
+
             _ctx.Entry(supervisorold).CurrentValues.SetValues(newSup);
         }
 
@@ -185,9 +206,9 @@ namespace OSlBackendWebService.Services
         {
             _ctx.Checkings.Add(checks);
         }
-        public bool SaveAll()
+        public void SaveAll()
         {
-            return _ctx.SaveChanges() > 0;
+            _ctx.SaveChanges();
         }
 
        
@@ -195,6 +216,23 @@ namespace OSlBackendWebService.Services
         public void Delete(string id)
         {
             throw new NotImplementedException();
+        }
+        public void UpdateEmployee(EmployeesLogs checkedstatus)
+        {
+            if (checkedstatus == null)
+                throw new ArgumentNullException(nameof(checkedstatus));
+            _ctx.EmployeesLogs.Update(checkedstatus);
+        }
+
+        public EmployeesLogs find(int id)
+        {
+            String CurrentDate = DateTime.Today.ToString("yyyy-MM-dd");
+            
+            var logdata = _ctx.EmployeesLogs
+                .Where(sa => sa.EmpId == id & sa.StringDate == CurrentDate)
+                .SingleOrDefault();
+            
+            return logdata;
         }
     }
 }
