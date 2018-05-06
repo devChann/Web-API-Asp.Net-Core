@@ -9,11 +9,10 @@ namespace OSlBackendWebService.oslviewmodels
     public class Emplogs
     {
 
-        public DateTime? Lit { get; set; }
+        public DateTime Lit { get; set; }
         public bool? CheckedSatus { get; set; } = false;
 
        
-
 
     }
 }

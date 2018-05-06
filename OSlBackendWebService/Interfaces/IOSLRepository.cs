@@ -30,7 +30,7 @@ namespace OSlBackendWebService.Interfaces
         void UpdateEmployee(EmployeesLogs checkedstatus);
         EmployeesLogs find(int id);
         IQueryable<Stations> GetAllStations();
-        EmployeesLogsViewModel GetStations(int StationID);
+        EmployeesLogsViewModel GetStations(string Name);
         bool DoesStationExist(int stationId);
         void Insert(Stations stn);
         void Update(Stations Original, Stations updated);
@@ -46,6 +46,7 @@ namespace OSlBackendWebService.Interfaces
 
         void Insert(EmployeesLogs Emplogs);
         void Insert(Checkings checks);
+        bool CheckSupervisorLogs(int supID);
         void SaveAll();
 
     }

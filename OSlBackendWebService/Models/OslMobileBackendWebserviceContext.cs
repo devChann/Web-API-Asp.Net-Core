@@ -26,15 +26,21 @@ namespace OSlBackendWebService.Models
 
                 entity.Property(e => e.TranszactionId).HasColumnName("TranszactionID");
 
-                entity.Property(e => e.CheckDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(CONVERT([varchar],getdate()))");
-
                 entity.Property(e => e.EmpId)
                     .HasColumnName("EmpID")
                     .HasColumnType("nchar(10)");
 
+                entity.Property(e => e.Lit)
+                    .HasColumnName("LIT")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(CONVERT([varchar],getdate()))");
+
                 entity.Property(e => e.Station).HasColumnType("nchar(10)");
+
+                entity.Property(e => e.StringDate)
+                    .HasColumnName("stringDate")
+                    .HasColumnType("nchar(10)")
+                    .HasDefaultValueSql("(CONVERT([char](10),getdate(),(126)))");
 
                 entity.Property(e => e.SupId).HasColumnName("SupID");
 

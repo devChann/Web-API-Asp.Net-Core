@@ -34,7 +34,7 @@ namespace OSlBackendWebService.Controllers
             {
                 if (emp == null || !ModelState.IsValid)
                 {
-                    return BadRequest(ErrorCode.TodoItemNameAndNotesRequired.ToString());
+                    return BadRequest(ErrorCode.enterrecorddetails.ToString());
                 }
                 //bool empExits = _toDoRepository.DoesEmpExist(emp.EmpId);
                 //if (empExits)
@@ -59,7 +59,7 @@ namespace OSlBackendWebService.Controllers
             {
                 if (emplogs == null || !ModelState.IsValid)
                 {
-                    return BadRequest(ErrorCode.TodoItemNameAndNotesRequired.ToString());
+                    return BadRequest(ErrorCode.enterrecorddetails.ToString());
                 }
                 bool EmpLogExist = _toDoRepository.checklogexist(emplogs.EmpId);
                 if (EmpLogExist)
@@ -76,21 +76,21 @@ namespace OSlBackendWebService.Controllers
             return Ok(emplogs);
         }
         [HttpPost]
-        [Route("Checkings")]
-        public IActionResult ChecksCreateLogs([FromBody] Checkings checkings)
+        [Route("CheckingsLogs")]
+        public IActionResult ChecksCreatedLogs([FromBody] Checkings checkings)
         {
 
             try
             {
                 if (checkings == null || !ModelState.IsValid)
                 {
-                    return BadRequest(ErrorCode.TodoItemNameAndNotesRequired.ToString());
+                    return BadRequest(ErrorCode.enterrecorddetails.ToString());
                 }
-                //bool EmpLogExist = _toDoRepository.checklogexist();
-                ////if (EmpLogExist)
-                ////{
-                ////    return StatusCode(StatusCodes.Status409Conflict, ErrorCode.logExist.ToString());
-                ////}
+                //bool ChecksLogExist = _toDoRepository.CheckSupervisorLogs(checkings.SupId);
+                //if (ChecksLogExist)
+                //{
+                //    return StatusCode(StatusCodes.Status409Conflict, ErrorCode.logExist.ToString());
+                //}
                 _toDoRepository.Insert(checkings);
                 _toDoRepository.SaveAll();
             }
@@ -115,8 +115,11 @@ namespace OSlBackendWebService.Controllers
         public IActionResult Logs(int id)
         {
             
-
             var logs = _toDoRepository.Logs(id);
+            if (logs == null)
+            {
+                return NotFound(ErrorCode.RecordNotFound.ToString());
+            }
             return Ok(logs);
         }
 
@@ -126,16 +129,23 @@ namespace OSlBackendWebService.Controllers
         {
 
             var supervisor = _toDoRepository.GetSup(id);
-
+            if (supervisor == null)
+            {
+                return NotFound(ErrorCode.RecordNotFound.ToString());
+            }
             return Ok(supervisor);
         }
 
         [HttpGet]
-        [Route("GetStations/{id}")]
-        public IActionResult GetStations(int id)
+        [Route("GetStations/{name}")]
+        public IActionResult GetStations(string name)
         {
 
-            var station = _toDoRepository.GetStations(id);
+            var station = _toDoRepository.GetStations(name);
+            if (station == null)
+            {
+                return NotFound(ErrorCode.RecordNotFound.ToString());
+            }
 
             return Ok(station);
         }
@@ -147,7 +157,7 @@ namespace OSlBackendWebService.Controllers
             {
                 if (employeesLogs == null || !ModelState.IsValid)
                 {
-                    return BadRequest(ErrorCode.TodoItemNameAndNotesRequired.ToString());
+                    return BadRequest(ErrorCode.enterrecorddetails.ToString());
                 }
                 var RecordToBeUpdated = _toDoRepository.find(id);
                 RecordToBeUpdated.CheckedSatus = employeesLogs.CheckedSatus;
@@ -167,7 +177,7 @@ namespace OSlBackendWebService.Controllers
         }
         public enum ErrorCode
         {
-            TodoItemNameAndNotesRequired,
+            enterrecorddetails,
             logExist,
             RecordNotFound,
             CouldNotCreateItem,

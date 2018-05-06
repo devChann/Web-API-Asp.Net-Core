@@ -101,12 +101,12 @@ namespace OSlBackendWebService.Services
             return _ctx.Stations.AsQueryable();
         }
 
-        public EmployeesLogsViewModel GetStations(int StationID)
+        public EmployeesLogsViewModel GetStations(string name)
         {
             var stations = _ctx.Stations
                 .Include(a => a.Employees)
                
-                .Where(a => a.Stid == StationID)
+                .Where(a => a.StationName == name)
                 .SingleOrDefault();
             var test = new EmployeesLogsViewModel();
             test.StationName = stations.StationName;
@@ -233,6 +233,13 @@ namespace OSlBackendWebService.Services
                 .SingleOrDefault();
             
             return logdata;
+        }
+
+        public bool CheckSupervisorLogs(int supID)
+        {
+            String CurrentDate = DateTime.Today.ToString("yyyy-MM-dd");
+
+            return _ctx.Checkings.Any(s => s.SupId == supID & s.StringDate == CurrentDate);
         }
     }
 }

@@ -7,12 +7,12 @@ namespace OSlBackendWebService.Models
     {
         public int TranszactionId { get; set; }
         public int EmpId { get; set; }
-        public DateTime? Lit { get; set; }
+        public DateTime Lit { get; set; }
         public DateTime? Lot { get; set; }
         public double? Xcoord { get; set; }
         public double? Ycoord { get; set; }
-        public DateTime ?Qdate { get; set; }
-        public bool? CheckedSatus { get; set; } = false;
+        public DateTime? Qdate { get; set; }
+        public bool? CheckedSatus { get; set; }
         public string StringDate { get; set; }
 
         public Employees Emp { get; set; }
