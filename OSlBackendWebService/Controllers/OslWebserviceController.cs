@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OSlBackendWebService.Interfaces;
 using OSlBackendWebService.Models;
+using GeoJSON.Net.Converters;
+using GeoJSON.Net.Geometry;
+using Newtonsoft.Json;
+using GeoJSON.Net.Feature;
 
 namespace OSlBackendWebService.Controllers
 {
@@ -26,6 +30,18 @@ namespace OSlBackendWebService.Controllers
         {
             return Ok(_toDoRepository.GetAll);
         }
+        [HttpGet]
+        [Route("EmployeesLogs")]
+        public IActionResult employeeLogsList()
+        {
+           
+
+            var LogItems = _toDoRepository.GetAllEmployeeLogs();
+            
+           
+            return Ok(LogItems);
+        }
+
         [HttpPost]
         [Route("CreateNewEmployee")]
         public IActionResult Create([FromBody] Employees emp)
@@ -61,7 +77,7 @@ namespace OSlBackendWebService.Controllers
                 {
                     return BadRequest(ErrorCode.enterrecorddetails.ToString());
                 }
-                bool EmpLogExist = _toDoRepository.checklogexist(emplogs.EmpId);
+                bool EmpLogExist = _toDoRepository.isLogExist(emplogs.EmpId);
                 if (EmpLogExist)
                 {
                    return StatusCode(StatusCodes.Status409Conflict, ErrorCode.logExist.ToString());
@@ -160,7 +176,33 @@ namespace OSlBackendWebService.Controllers
                     return BadRequest(ErrorCode.enterrecorddetails.ToString());
                 }
                 var RecordToBeUpdated = _toDoRepository.find(id);
-                RecordToBeUpdated.CheckedSatus = employeesLogs.CheckedSatus;
+                RecordToBeUpdated.CheckedSatus = true;
+
+                if (RecordToBeUpdated == null)
+                {
+                    return NotFound(ErrorCode.RecordNotFound.ToString());
+                }
+                _toDoRepository.UpdateEmployee(RecordToBeUpdated);
+                _toDoRepository.SaveAll();
+            }
+            catch (Exception)
+            {
+                return BadRequest(ErrorCode.CouldNotUpdateItem.ToString());
+            }
+            return NoContent();
+        }
+        [HttpPut]
+        [Route("updateLOT/{id}")]
+        public IActionResult EditLOT(int id, [FromBody] EmployeesLogs employeesLogs)
+        {
+            try
+            {
+                if (employeesLogs == null || !ModelState.IsValid)
+                {
+                    return BadRequest(ErrorCode.enterrecorddetails.ToString());
+                }
+                var RecordToBeUpdated = _toDoRepository.find(id);
+                RecordToBeUpdated.Lot=DateTime.Now;
 
                 if (RecordToBeUpdated == null)
                 {

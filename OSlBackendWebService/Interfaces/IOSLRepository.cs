@@ -1,4 +1,5 @@
-﻿using OSlBackendWebService.Models;
+﻿using GeoJSON.Net.Feature;
+using OSlBackendWebService.Models;
 using OSlBackendWebService.oslviewmodels;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,8 @@ namespace OSlBackendWebService.Interfaces
 
         IQueryable<Employees> GetAllEmployees();
         IEnumerable<Employees> GetAll { get; }
-       EmployeelistViewModel GetEmployee(int EmpID);
+        FeatureCollection GetAllEmployeeLogs();
+        EmployeelistViewModel GetEmployee(int EmpID);
         bool DoesEmpExist(int EmpID);
         bool LoginEmp(int EmpID, int password);
         void Insert(Employees emp);
@@ -26,7 +28,7 @@ namespace OSlBackendWebService.Interfaces
         //Task<List<EmployeesLogsViewModel>> GetLogsForStation();
 
         Emplogs Logs(int id);
-        bool checklogexist(int empid);
+        bool isLogExist(int empid);
         void UpdateEmployee(EmployeesLogs checkedstatus);
         EmployeesLogs find(int id);
         IQueryable<Stations> GetAllStations();

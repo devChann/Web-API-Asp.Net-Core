@@ -6,6 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OSlBackendWebService.oslviewmodels;
+using GeoJSON.Net.Converters;
+using GeoJSON.Net.Geometry;
+using Newtonsoft.Json;
+using System.Spatial;
+using GeoJSON.Net.Feature;
 
 namespace OSlBackendWebService.Services
 {
@@ -18,14 +23,41 @@ namespace OSlBackendWebService.Services
             
             _ctx = ctx;
         }
-
-       
+               
         public IEnumerable<Employees> GetAll
         {
             get { return _ctx.Employees.ToList(); }
         }
+        public FeatureCollection GetAllEmployeeLogs()
+        {
 
-       
+
+            var emplogs = _ctx.EmployeesLogs
+                           .ToList();
+            List<LatLongViewModel> latlong = new List<LatLongViewModel>();
+            List<LogsViewModel> logsviewmodel = new List<LogsViewModel>();
+            List<Feature> lstGeoLocation = new List<Feature>();
+            var model = new FeatureCollection() { CRS = new GeoJSON.Net.CoordinateReferenceSystem.NamedCRS("urn:ogc:def:crs:OGC::CRS84") };
+            emplogs.ForEach(x =>
+            {
+                LatLongViewModel Obj = new LatLongViewModel();
+                LogsViewModel logs = new LogsViewModel();
+                logs.EmpId = x.EmpId;
+                logs.Lit = x.Lit;
+                logs.Lot = x.Lot;
+                logs.TranszactionId = x.TranszactionId;
+                logs.CheckedSatus = x.CheckedSatus;
+                Obj.Coordinates = new Point(new Position(x.Xcoord, x.Ycoord));
+                Feature feature = new Feature(new Point(new Position(x.Xcoord,x.Ycoord)), logs);
+
+                lstGeoLocation.Add(feature);
+                model.Features.Add(feature);
+               
+            });
+            //var actualJson = JsonConvert.SerializeObject(model);
+            return model;
+        }
+
         public Employees Find(int id)
         {
             return _ctx.Employees.FirstOrDefault(sa => sa.EmpId == id);
@@ -56,7 +88,7 @@ namespace OSlBackendWebService.Services
            
             return _ctx.Employees.Any(s => s.EmpId == EmpID);
         }
-        public bool checklogexist(int empid)
+        public bool isLogExist(int empid)
         {
             String CurrentDate = DateTime.Today.ToString("yyyy-MM-dd");
 
@@ -80,7 +112,7 @@ namespace OSlBackendWebService.Services
         {
              _ctx.Employees.Add(emp);
         }
-        public void insert(Checkings checkings)
+        public void Insert(Checkings checkings)
         {
             _ctx.Checkings.Add(checkings);
         }
@@ -202,10 +234,10 @@ namespace OSlBackendWebService.Services
             _ctx.EmployeesLogs.Add(Emplogs);
         }
 
-        public void Insert(Checkings checks)
-        {
-            _ctx.Checkings.Add(checks);
-        }
+        //public void Insert(Checkings checks)
+        //{
+        //    _ctx.Checkings.Add(checks);
+        //}
         public void SaveAll()
         {
             _ctx.SaveChanges();

@@ -9,8 +9,8 @@ namespace OSlBackendWebService.Models
         public int EmpId { get; set; }
         public DateTime Lit { get; set; }
         public DateTime? Lot { get; set; }
-        public double? Xcoord { get; set; }
-        public double? Ycoord { get; set; }
+        public double Xcoord { get; set; }
+        public double Ycoord { get; set; }
         public DateTime? Qdate { get; set; }
         public bool? CheckedSatus { get; set; }
         public string StringDate { get; set; }
