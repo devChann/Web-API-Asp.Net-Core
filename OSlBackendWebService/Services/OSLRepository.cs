@@ -33,7 +33,10 @@ namespace OSlBackendWebService.Services
 
 
             var emplogs = _ctx.EmployeesLogs
-                           .ToList();
+                            .Include(sa=>sa.Emp)
+                            .ThenInclude(sa=>sa.Station.Sup.Checkings)
+                            
+                            .ToList();
             List<LatLongViewModel> latlong = new List<LatLongViewModel>();
             List<LogsViewModel> logsviewmodel = new List<LogsViewModel>();
             List<Feature> lstGeoLocation = new List<Feature>();
@@ -46,9 +49,14 @@ namespace OSlBackendWebService.Services
                 logs.Lit = x.Lit;
                 logs.Lot = x.Lot;
                 logs.TranszactionId = x.TranszactionId;
+                logs.StationName = x.Emp.Station.StationName;
                 logs.CheckedSatus = x.CheckedSatus;
-                Obj.Coordinates = new Point(new Position(x.Xcoord, x.Ycoord));
-                Feature feature = new Feature(new Point(new Position(x.Xcoord,x.Ycoord)), logs);
+                logs.EmployeeName = x.Emp.Name;
+                logs.SupId = x.Emp.Station.SupId;
+
+
+                //Obj.Coordinates = new Point(new Position(x.Xcoord, x.Ycoord));
+                Feature feature = new Feature(new Point(new Position(x.Ycoord,x.Xcoord)), logs);
 
                 lstGeoLocation.Add(feature);
                 model.Features.Add(feature);

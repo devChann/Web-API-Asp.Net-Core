@@ -7,6 +7,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
 
 namespace OSlBackendWebService
 {
@@ -19,6 +20,7 @@ namespace OSlBackendWebService
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+               
                 .UseKestrel()
                 .UseUrls("http://*:5000")
                 .UseIISIntegration()

@@ -12,6 +12,10 @@ namespace OSlBackendWebService.oslviewmodels
         public DateTime Lit { get; set; }
         public DateTime? Lot { get; set; }
         public bool? CheckedSatus { get; set; }
+        public string EmployeeName { get; set; }
         
+        public string StationName { get; set; }
+        public int? SupId { get; set; }
+
     }
 }
